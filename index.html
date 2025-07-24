@@ -73,7 +73,7 @@
           if (!name || !email) return;
 
           try {
-            const res = await fetch("https://userapi-lghm.onrender.com/", {
+            const res = await fetch("https://userapi-lghm.onrender.com/users", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ name, email }),
@@ -94,7 +94,7 @@
       // Fetch users and display them
       async function DisplayMessages() {
         try {
-          const res = await fetch("https://userapi-lghm.onrender.com/");
+          const res = await fetch("https://userapi-lghm.onrender.com/users");
           const data = await res.json();
           console.log(data);
           const tbody = document.getElementById("user-body");
