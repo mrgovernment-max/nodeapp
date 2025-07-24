@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User List</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 60%;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ccc;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+      input {
+        margin: 5px 10px 5px 0;
+        padding: 5px;
+      }
+      button {
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Users Database</h1>
+
+    <!-- 👇 User Form -->
+    <form id="userForm">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <button type="submit">Add User</button>
+    </form>
+
+    <!-- 👇 Users Table -->
+    <button onclick="DisplayMessages()">Display Users</button>
+
+    <table id="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody id="user-body">
+        <!-- Users will be injected here -->
+      </tbody>
+    </table>
+
+    <script>
+      // Handle form submission
+      document
+        .getElementById("userForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("name").value.trim();
+          const email = document.getElementById("email").value.trim();
+
+          if (!name || !email) return;
+
+          try {
+            const res = await fetch("http://localhost:3000/users", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name, email }),
+            });
+
+            if (res.ok) {
+              alert("User added successfully!");
+              document.getElementById("userForm").reset();
+              DisplayMessages(); // Refresh table
+            } else {
+              alert("Failed to add user");
+            }
+          } catch (err) {
+            console.error("Error:", err);
+          }
+        });
+
+      // Fetch users and display them
+      async function DisplayMessages() {
+        try {
+          const res = await fetch("http://localhost:3000/users");
+          const data = await res.json();
+          console.log(data);
+          const tbody = document.getElementById("user-body");
+          tbody.innerHTML = "";
+
+          data.forEach((user) => {
+            const row = `
+            <tr>
+              <td>${user.id}</td>
+              <td>${user.name}</td>
+              <td>${user.email}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+          });
+        } catch (err) {
+          console.error("Error fetching users:", err);
+        }
+      }
+    </script>
+  </body>
+</html>
